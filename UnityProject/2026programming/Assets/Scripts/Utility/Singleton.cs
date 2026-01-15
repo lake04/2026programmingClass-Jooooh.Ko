@@ -9,10 +9,7 @@ public class Singleton<T> : MonoBehaviour where T : Component
         {
             if (instance == null)
             {
-                if (instance == null)
-                {
-                    SetupInstance();
-                }
+               SetupInstance();
             }
             return instance;
         }
