@@ -7,7 +7,6 @@ public class CollisionSystem
     public static CollisionSystem Get() => _instance;
 
     private float playerRadius = 0.5f;
-    private float enemyRadius = 0.4f;
 
     public CollisionSystem()
     {
@@ -16,8 +15,9 @@ public class CollisionSystem
 
     public void LogicUpdate()
     {
-        CheckEnemyWithBullets();
+        CheckEnemyWithBullets(); 
         CheckPlayerWithEnemies();
+        CheckPlayerWithExp();
     }
 
     private bool IsColliding(Vector2 posA, float radA, Vector2 posB, float radB)
@@ -29,7 +29,7 @@ public class CollisionSystem
     public void CheckEnemyWithBullets()
     {
         var enemies = Enemy.ActiveEnemies;
-        var bullets = Bullet.ActiveBullets; 
+        var bullets = Bullet.ActiveBullets;
 
         for (int i = bullets.Count - 1; i >= 0; i--)
         {
@@ -62,7 +62,9 @@ public class CollisionSystem
         if (GameManager.Instance.player == null) return;
 
         var playerObj = GameManager.Instance.player.GetComponent<ICollidable>();
-        if (playerObj == null) return;
+        var playerDamageable = GameManager.Instance.player.GetComponent<IDamageable>();
+
+        if (playerObj == null || playerDamageable == null) return;
 
         Vector2 playerPos = playerObj.Position;
         var enemies = Enemy.ActiveEnemies;
@@ -71,8 +73,26 @@ public class CollisionSystem
         {
             if (IsColliding(playerPos, playerRadius, enemies[i].Position, enemies[i].Radius))
             {
-                // 플레이어 피격 처리
-                // Player.OnDamage();
+                playerDamageable.TakeDamage(enemies[i].damage);
+
+                playerObj.OnCollide(enemies[i]);
+                enemies[i].OnCollide(playerObj);
+            }
+        }
+    }
+
+    public void CheckPlayerWithExp()
+    {
+        var player = GameManager.Instance.player;
+        var gems = Exp.ActiveGems;
+        if (player == null || gems.Count == 0) return;
+
+        for (int i = gems.Count - 1; i >= 0; i--)
+        {
+            float combinedRadius = player.Radius + gems[i].Radius;
+            if ((player.Position - gems[i].Position).sqrMagnitude <= combinedRadius * combinedRadius)
+            {
+                gems[i].OnCollide(player);
             }
         }
     }

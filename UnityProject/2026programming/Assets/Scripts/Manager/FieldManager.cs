@@ -22,22 +22,61 @@ public class FieldManager : ManagerBase
     private Vector2 gridOrigin;
     private Queue<Vector2Int> searchQueue = new Queue<Vector2Int>(600);
 
+    public List<Enemy>[,] enemyGrid;
+
     public override void Init()
     {
         Instance = this;
         grid = new Grid[gridWidth, gridHeight];
-        player = GameManager.Instance.player.transform;
+        enemyGrid = new List<Enemy>[gridWidth, gridHeight];
+
+        for (int x = 0; x < gridWidth; x++)
+        {
+            for (int y = 0; y < gridHeight; y++)
+            {
+                enemyGrid[x, y] = new List<Enemy>(10);
+            }
+        }
+
+        if (GameManager.Instance != null && GameManager.Instance.player != null)
+        {
+            player = GameManager.Instance.player.transform;
+        }
     }
 
     void Update()
     {
-        if(player !=null && Time.frameCount % 10 ==0)
+        if(player !=null)
         {
-            UpdateFlowFied();
+            UpdateOrigin();
+            ClearEnemyGrid();
+
+            if (Time.frameCount % 10 == 0) UpdateFlowField();
         }
     }
 
-    private void UpdateFlowFied()
+    private void UpdateOrigin()
+    {
+        gridOrigin = (Vector2)player.position - new Vector2(gridWidth * cellSize * 0.5f, gridHeight * cellSize * 0.5f);
+    }
+
+    private void ClearEnemyGrid()
+    {
+        for (int x = 0; x < gridWidth; x++)
+            for (int y = 0; y < gridHeight; y++)
+                enemyGrid[x, y].Clear();    
+    }
+
+    public void RegisterEnemy(Enemy enemy, Vector3 worldPos)
+    {
+        Vector2Int gPos = WorldToGrid(worldPos);
+        if (IsInsideGrid(gPos.x, gPos.y))
+        {
+            enemyGrid[gPos.x, gPos.y].Add(enemy);
+        }
+    }
+
+    private void UpdateFlowField()
     {
         gridOrigin = (Vector2)player.position - new Vector2(gridWidth * cellSize * 0.5f,gridHeight * cellSize * 0.5f);
 
@@ -131,13 +170,14 @@ public class FieldManager : ManagerBase
         return ((Vector2)player.position - (Vector2)worldPos).normalized;
     }
 
-    private Vector2Int WorldToGrid(Vector3 worldPos)
+    public Vector2Int WorldToGrid(Vector3 worldPos)
     {
         int x = Mathf.FloorToInt((worldPos.x - gridOrigin.x) / cellSize);
         int y = Mathf.FloorToInt((worldPos.y - gridOrigin.y) / cellSize);
         return new Vector2Int(x, y);
     }
 
-    private bool IsInsideGrid(int x, int y) => x >= 0 && x < gridWidth && y >= 0 && y < gridHeight;
+    public bool IsInsideGrid(int x, int y) => x >= 0 && x < gridWidth && y >= 0 && y < gridHeight;
+    public bool IsInsideGrid(Vector2 pos) => pos.x >= 0 && pos.x < gridWidth && pos.y >= 0 && pos.y < gridHeight;
 
 }

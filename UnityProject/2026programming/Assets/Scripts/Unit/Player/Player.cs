@@ -9,13 +9,27 @@ public class Player : Unit, IDamageable , ICollidable
 
     private Vector2 moveInput;
 
-    public Vector2 Position => transform.position;
+    public Vector2 Position => rb.position;
 
     public float Radius => 0.4f;
+
+    [Header("공격 설정")]
+    public ObjectPool bulletPool;
+    private IEnumerator ieAttackRoutine;
+    private WaitForSeconds attackWait;
+    private WaitForSeconds searchWait = new WaitForSeconds(0.2f);
+
 
     private  void Awake()
     {
         Init();
+
+        ieAttackRoutine = IE_AttackRoutine();
+        attackWait = new WaitForSeconds(attackCooldown);
+    }
+    private void Start()
+    {
+        StartCoroutine(ieAttackRoutine);
     }
 
     private  void Update()
@@ -25,16 +39,10 @@ public class Player : Unit, IDamageable , ICollidable
 
     private  void FixedUpdate()
     {
-        switch (currentState)
-        {
-            case PlayerState.Idle:
-            case PlayerState.Move:
-                Move();
-                break;
-            case PlayerState.Attack:
-                break;
-        }
+       Move();
+     
     }
+
 
     public override void Init()
     {
@@ -48,18 +56,8 @@ public class Player : Unit, IDamageable , ICollidable
         moveInput.x = Input.GetAxisRaw("Horizontal");
         moveInput.y = Input.GetAxisRaw("Vertical");
 
-        if (currentState != PlayerState.Attack)
-        {
-            currentState = (moveInput.sqrMagnitude > 0) ? PlayerState.Move : PlayerState.Idle;
-        }
-
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         spriteRenderer.flipX = (mousePos.x < transform.position.x);
-
-        if (Input.GetButtonDown("Fire1") && currentState != PlayerState.Attack)
-        {
-            StartCoroutine(AttackRoutine());
-        }
     }
 
     protected override void Move()
@@ -67,19 +65,59 @@ public class Player : Unit, IDamageable , ICollidable
         rb.linearVelocity = moveInput.normalized * moveSpeed;
     }
 
-    private IEnumerator AttackRoutine()
+    private IEnumerator IE_AttackRoutine()
     {
-        currentState = PlayerState.Attack;
-        Attack();
+        while (true)
+        {
+            Enemy target = GetNearestEnemy();
 
-        yield return new WaitForSeconds(attackCooldown);
-
-        currentState = PlayerState.Idle;
+            if (target != null)
+            {
+                currentState = PlayerState.Attack;
+                FireBullet(target);
+                yield return attackWait;
+            }
+            else
+            {
+                yield return new WaitForSeconds(0.2f);
+            }
+        }
     }
 
-    private void  Attack()
+    private Enemy GetNearestEnemy()
     {
+        Enemy neatest = null;
+        float minDistSq = float.MaxValue;
+        var enemies = Enemy.ActiveEnemies;
 
+        for(int i =0; i< enemies.Count; i++)
+        {
+            float distSq = (enemies[i].Position - this.Position).sqrMagnitude;
+            if (distSq < minDistSq && distSq < 225f)
+            {
+                minDistSq = distSq;
+                neatest = enemies[i];
+            }
+        }
+        return neatest;
+    }
+
+    private void FireBullet(Enemy target)
+    {
+        if (bulletPool == null) return;
+
+        PooledObject pooled = bulletPool.GetPooledObject();
+        pooled.transform.position = rb.position;
+
+        if(pooled.TryGetComponent(out Bullet bullet))
+        {
+           Vector2 fireDir = (target.Position - this.Position).normalized;
+
+            float angle = Mathf.Atan2(fireDir.y, fireDir.x) * Mathf.Rad2Deg;
+            pooled.transform.rotation = Quaternion.Euler(0, 0, angle - 90);
+
+            bullet.InitBullet(fireDir, damage);
+        }
     }
 
     public void TakeDamage(float amount)
@@ -97,6 +135,6 @@ public class Player : Unit, IDamageable , ICollidable
 
     public void OnCollide(ICollidable other)
     {
-        throw new System.NotImplementedException();
+        
     }
 }

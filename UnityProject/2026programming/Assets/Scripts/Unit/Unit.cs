@@ -6,6 +6,7 @@ public class Unit : MonoBehaviour
     public float maxHp;
     public float moveSpeed;
     public float attackCooldown;
+    public float damage;
     protected Rigidbody2D rb;
     protected SpriteRenderer spriteRenderer;
 
