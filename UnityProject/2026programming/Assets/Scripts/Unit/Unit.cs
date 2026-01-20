@@ -26,5 +26,10 @@ public class Unit : MonoBehaviour
         curHp = maxHp;
     }
 
+    protected virtual void Move()
+    {
+
+    }
+
 
 }

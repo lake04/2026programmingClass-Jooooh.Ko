@@ -10,6 +10,7 @@ public class EnemySpawner : MonoBehaviour
     private WaitForSeconds wait;
 
     public Transform[] spawnPoints;
+    public int enemyCount;
 
     private void Awake()
     {
@@ -36,7 +37,7 @@ public class EnemySpawner : MonoBehaviour
     {
         PooledObject pooled = enemyPool.GetPooledObject();
         pooled.transform.position = spawnPoints[Random.Range(1, spawnPoints.Length)].position;
-
+        enemyCount++;
         pooled.GetComponent<Enemy>().Init();
     }
 }

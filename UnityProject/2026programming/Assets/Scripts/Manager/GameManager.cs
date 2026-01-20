@@ -4,13 +4,13 @@ using UnityEngine;
 public class GameManager : Singleton<GameManager>
 {
     [SerializeField] private ManagerBase[] managers;
+    public GameObject player;
 
-
-    private void Awake()
+    public override void Awake()
     {
-        foreach( ManagerBase manager in managers )
+        base.Awake();
+        foreach ( ManagerBase manager in managers )
         {
-            manager.Awake();
             manager.Init();
         }
     }

@@ -11,10 +11,10 @@ GameObject:
   - component: {fileID: 6890374352865080273}
   - component: {fileID: 8059361866777503832}
   - component: {fileID: 4760765100795978634}
-  - component: {fileID: 2279296581654643566}
+  - component: {fileID: 2202111300273858436}
   - component: {fileID: 6918145406979544622}
   - component: {fileID: -9161575161914849927}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -99,7 +99,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8296052327250764602}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -118,7 +118,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!58 &2279296581654643566
+--- !u!58 &2202111300273858436
 CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -169,6 +169,11 @@ MonoBehaviour:
   maxHp: 5
   moveSpeed: 2
   attackCooldown: 0
+  separationDistance: 0.5
+  separationForce: 1.2
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &-9161575161914849927
 MonoBehaviour:
   m_ObjectHideFlags: 0

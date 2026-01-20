@@ -1,13 +1,17 @@
 using UnityEngine;
 using System.Collections;
 
-public class Player : Unit, IDamageable
+public class Player : Unit, IDamageable , ICollidable
 {
     public enum PlayerState { Idle, Move, Attack }
     [Header("State")]
     public PlayerState currentState = PlayerState.Idle;
 
     private Vector2 moveInput;
+
+    public Vector2 Position => transform.position;
+
+    public float Radius => 0.4f;
 
     private  void Awake()
     {
@@ -25,7 +29,7 @@ public class Player : Unit, IDamageable
         {
             case PlayerState.Idle:
             case PlayerState.Move:
-                MoveLogic();
+                Move();
                 break;
             case PlayerState.Attack:
                 break;
@@ -58,7 +62,7 @@ public class Player : Unit, IDamageable
         }
     }
 
-    private void MoveLogic()
+    protected override void Move()
     {
         rb.linearVelocity = moveInput.normalized * moveSpeed;
     }
@@ -89,5 +93,10 @@ public class Player : Unit, IDamageable
     {
         
         Debug.Log("플레이어 사망");
+    }
+
+    public void OnCollide(ICollidable other)
+    {
+        throw new System.NotImplementedException();
     }
 }
