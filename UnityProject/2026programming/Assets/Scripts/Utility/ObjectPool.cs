@@ -8,10 +8,15 @@ public class ObjectPool : MonoBehaviour
     [SerializeField] private PooledObject objectToPool;
     protected Stack<PooledObject> stack;
 
+    private void Awake()
+    {
+        SetupPool();
+
+    }
 
     void Start()
     {
-        SetupPool();
+
     }
 
    private void SetupPool()

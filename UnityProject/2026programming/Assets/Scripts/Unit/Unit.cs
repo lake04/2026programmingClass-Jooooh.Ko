@@ -2,9 +2,14 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
-    protected int curHp;
-    protected int maxHp;
-    protected float moveSpeed;
+    protected float curHp;
+    public float maxHp;
+    public float moveSpeed;
+    public float attackCooldown;
+    protected Rigidbody2D rb;
+    protected SpriteRenderer spriteRenderer;
+
+
 
     void Start()
     {
@@ -15,4 +20,11 @@ public class Unit : MonoBehaviour
     {
         
     }
+
+    public virtual void Init()
+    {
+        curHp = maxHp;
+    }
+
+
 }
