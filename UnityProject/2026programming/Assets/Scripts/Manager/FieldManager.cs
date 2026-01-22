@@ -7,10 +7,8 @@ public struct Grid
     public Vector2 direction;
 }
 
-public class FieldManager : ManagerBase
+public class FieldManager : Singleton<FieldManager>, IManager
 {
-    public static FieldManager Instance;
-
     [Header("그리드 설정")]
     [SerializeField] private int gridWidth = 30;
     [SerializeField] private int gridHeight = 20;
@@ -24,9 +22,9 @@ public class FieldManager : ManagerBase
 
     public List<Enemy>[,] enemyGrid;
 
-    public override void Init()
+    public  void Init()
     {
-        Instance = this;
+        Debug.Log("필드 매니저1");
         grid = new Grid[gridWidth, gridHeight];
         enemyGrid = new List<Enemy>[gridWidth, gridHeight];
 

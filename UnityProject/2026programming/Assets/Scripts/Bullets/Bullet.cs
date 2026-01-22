@@ -59,6 +59,7 @@ public class Bullet : MonoBehaviour, ICollidable
         }
     }
 
+
     public void Deactivate()
     {
         if (_pooledObject != null)

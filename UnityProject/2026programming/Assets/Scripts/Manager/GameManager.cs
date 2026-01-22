@@ -1,23 +1,33 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : Singleton<GameManager>
 {
-    [SerializeField] private ManagerBase[] managers;
+    [SerializeField] private IManager[] managers;
     public Player player;
     private CollisionSystem _collisionSystem;
 
-    public float curExp = 0;
-    private float maxExp = 10f;
-    public int curLeve = 1;
-
-    public ObjectPool expPool;
 
     public override void Awake()
     {
         base.Awake();
-        foreach ( ManagerBase manager in managers )
+
+        var allScripts = GetComponentsInChildren<MonoBehaviour>(true);
+        var mList = new System.Collections.Generic.List<IManager>();
+
+        foreach (var script in allScripts)
         {
-            manager.Init();
+            if (script is IManager manager)
+            {
+                mList.Add(manager);
+            }
+        }
+        managers = mList.ToArray();
+
+        foreach (var m in managers)
+        {
+            m.Init();
         }
     }
 
@@ -44,14 +54,6 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-    public void AddExp(float amount)
-    {
-        curExp += amount;
-        if (curExp >= maxExp)
-        {
-            curExp -= maxExp;
-            maxExp *= 1.2f;
-            curLeve++;
-        }
-    }
+  
+  
 }

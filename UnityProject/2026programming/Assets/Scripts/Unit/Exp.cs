@@ -33,8 +33,6 @@ public class Exp : MonoBehaviour, ICollidable
     {
         ActiveGems.Add(this);
         _isFlying = false;
-
-       
     }
 
     private void Start()
@@ -71,6 +69,15 @@ public class Exp : MonoBehaviour, ICollidable
         }
     }
 
+    public void InitPos(Vector2 targetPos)
+    {
+        transform.position = targetPos;
+        rb.position = targetPos;
+
+        rb.linearVelocity = Vector2.zero;
+        _isFlying = false;
+    }
+
     private void MoveToPlayer()
     {
         Vector2 newPos = Vector2.MoveTowards(rb.position, _playerTransform.position, moveSpeed * Time.deltaTime);
@@ -89,7 +96,7 @@ public class Exp : MonoBehaviour, ICollidable
 
     private void Collect()
     {
-        GameManager.Instance.AddExp(expAmount);
+        LevelMamanger.Instance.AddExp(expAmount);
         Deactivate();
     }
 

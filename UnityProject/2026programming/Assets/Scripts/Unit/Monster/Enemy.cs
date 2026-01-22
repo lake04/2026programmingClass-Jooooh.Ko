@@ -15,7 +15,7 @@ public class Enemy : Unit, IDamageable, ICollidable
     private static Collider2D[] _neighborResults = new Collider2D[10];
 
     public Vector2 Position => rb.position;
-    public float Radius => 0.4f;
+    public float Radius => 0.3f;
 
     private static ContactFilter2D _enemyFilter;
     private static bool _filterInitialized = false;
@@ -123,8 +123,13 @@ public class Enemy : Unit, IDamageable, ICollidable
 
     public void Die()
     {
-        PooledObject exp = GameManager.Instance.expPool.GetPooledObject();
+        PooledObject exp = LevelMamanger.Instance.expPool.GetPooledObject();
         exp.transform.position = transform.position;
+
+        if (exp.TryGetComponent(out Exp expScript))
+        {
+            expScript.InitPos(transform.position);
+        }
 
         _pooledObject.Release();
     }

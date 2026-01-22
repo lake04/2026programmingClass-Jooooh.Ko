@@ -17,6 +17,7 @@ public class Player : Unit, IDamageable , ICollidable
     public ObjectPool bulletPool;
     private IEnumerator ieAttackRoutine;
     private WaitForSeconds attackWait;
+    [SerializeField] private float serarchRange = 15f;
     private WaitForSeconds searchWait = new WaitForSeconds(0.2f);
 
 
@@ -93,7 +94,7 @@ public class Player : Unit, IDamageable , ICollidable
         for(int i =0; i< enemies.Count; i++)
         {
             float distSq = (enemies[i].Position - this.Position).sqrMagnitude;
-            if (distSq < minDistSq && distSq < 225f)
+            if (distSq < minDistSq && distSq < serarchRange)
             {
                 minDistSq = distSq;
                 neatest = enemies[i];
