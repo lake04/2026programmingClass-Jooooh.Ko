@@ -20,7 +20,6 @@ public class Player : Unit, IDamageable , ICollidable
     [SerializeField] private float serarchRange = 15f;
     private WaitForSeconds searchWait = new WaitForSeconds(0.2f);
 
-
     private  void Awake()
     {
         Init();
@@ -43,7 +42,6 @@ public class Player : Unit, IDamageable , ICollidable
        Move();
      
     }
-
 
     public override void Init()
     {
@@ -132,6 +130,34 @@ public class Player : Unit, IDamageable , ICollidable
     {
         
         Debug.Log("플레이어 사망");
+    }
+
+    public void AddHP(int amount)
+    {
+        maxHp += amount;
+        curHp += amount;
+    }
+    public void AddStats(int hp, int dmg, float speed)
+    {
+        maxHp += hp;
+        damage += dmg;
+        moveSpeed += speed;
+    }
+
+    public void Healingv(int _hp)
+    {
+        if (curHp < maxHp)
+        {
+            curHp += _hp;
+            if (curHp > maxHp)
+            {
+                curHp = maxHp;
+            }
+        }
+        else
+        {
+            curHp = maxHp;
+        }
     }
 
     public void OnCollide(ICollidable other)

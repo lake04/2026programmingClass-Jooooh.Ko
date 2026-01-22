@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,15 +15,18 @@ public class LevelMamanger : Singleton<LevelMamanger>, IManager
 
     public ObjectPool expPool;
 
+    [Header("카드 풀")]
+    [SerializeField] private List<CardBase> cardPool = new List<CardBase>();
+
     public  void Init()
     {
-        Debug.Log("level 매니저1");
+        
     }
    
 
     void Start()
     {
-        
+        CardUIManager.Instance.SetCardPool(cardPool);
     }
 
     void Update()
@@ -37,11 +41,17 @@ public class LevelMamanger : Singleton<LevelMamanger>, IManager
 
         if (curExp >= maxExp)
         {
-            curExp -= maxExp;
-            maxExp *= 1.2f;
-            curLeve++;
-            levelText.text = "Lv." + curLeve;
-            levelSlider.value = curExp / maxExp;
+            LevelUp();
         }
+    }
+
+    private void LevelUp()
+    {
+        curExp -= maxExp;
+        maxExp *= 1.2f;
+        curLeve++;
+        levelText.text = "Lv." + curLeve;
+        levelSlider.value = curExp / maxExp;
+        CardUIManager.Instance.ShowCards();
     }
 }

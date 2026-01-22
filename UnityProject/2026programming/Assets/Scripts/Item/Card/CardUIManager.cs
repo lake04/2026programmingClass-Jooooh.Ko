@@ -1,0 +1,92 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class CardUIManager : Singleton<CardUIManager>,IManager
+{
+    public GameObject panel;
+    public CardSlotUI[] slots;
+
+    private List<CardBase> allCardPool = new List<CardBase>();
+    public List<CardBase> currentCards = new List<CardBase>();
+
+    private bool isClick = false;
+
+
+    public void SetCardPool(List<CardBase> cards)
+    {
+        allCardPool = cards;
+    }
+
+    public void ShowCards()
+    {
+        panel.SetActive(true);
+        //panel.transform.localScale = Vector3.one;
+        isClick = false;
+        currentCards.Clear();
+        List<int> usedIndices = new List<int>();
+        for (int i = 0; i < slots.Length; i++)
+        {
+            int index;
+            do
+            {
+                index = Random.Range(0, allCardPool.Count);
+            } while (usedIndices.Contains(index));
+
+            usedIndices.Add(index);
+            currentCards.Add(allCardPool[index]);
+        }
+        for (int i = 0; i < slots.Length; i++)
+        {
+            slots[i].Setup(currentCards[i]);
+            slots[i].gameObject.SetActive(false);
+            slots[i].button.interactable = false;
+        }
+
+        ShowCardSequence();
+        isClick = true;
+    }
+
+    private void ShowCardSequence()
+    {
+        for (int i = 0; i < slots.Length; i++)
+        {
+            slots[i].gameObject.SetActive(true);
+            slots[i].button.interactable = true;
+        }
+        Time.timeScale = 0f;
+
+    }
+
+    public void ChooseCard(CardBase chosen)
+    {
+        if (!isClick) return;
+
+        isClick = false;
+
+        Debug.Log("Ä«µå ¼±ÅÃµÊ");
+        panel.SetActive(false);
+        Time.timeScale = 1f;
+
+        StatCard statCard = chosen as StatCard;
+
+        switch (chosen.cardType)
+        {
+            case cardType.stat:
+                GameManager.instance.player.AddStats(statCard.playerHP, statCard.playerDamage, statCard.playerSpeed);
+                break;
+            case cardType.Healing:
+                GameManager.instance.player.Healingv(statCard.playerHP);
+                break;
+            case cardType.Item:
+               
+                break;
+        }
+    }
+
+    public void Init()
+    {
+        panel.SetActive(false);
+    }
+}

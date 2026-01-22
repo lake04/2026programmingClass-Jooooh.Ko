@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -14,7 +15,7 @@ public class GameManager : Singleton<GameManager>
         base.Awake();
 
         var allScripts = GetComponentsInChildren<MonoBehaviour>(true);
-        var mList = new System.Collections.Generic.List<IManager>();
+        var mList = new List<IManager>();
 
         foreach (var script in allScripts)
         {
