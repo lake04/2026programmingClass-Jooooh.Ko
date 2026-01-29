@@ -29,11 +29,6 @@ public class LevelMamanger : Singleton<LevelMamanger>, IManager
         CardUIManager.Instance.SetCardPool(cardPool);
     }
 
-    void Update()
-    {
-        
-    }
-
     public void AddExp(float amount)
     {
         curExp += amount;

@@ -14,11 +14,6 @@ public class ObjectPool : MonoBehaviour
 
     }
 
-    void Start()
-    {
-
-    }
-
    private void SetupPool()
     {
         stack = new Stack<PooledObject>();

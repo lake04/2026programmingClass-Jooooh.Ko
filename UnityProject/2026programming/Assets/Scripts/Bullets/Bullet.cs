@@ -8,6 +8,7 @@ public class Bullet : MonoBehaviour, ICollidable
     public float damage = 10f;
     public int pierce = 0;
     public float speed = 10f;
+    public float power = 0f;
     [SerializeField] private float radius = 0.2f;
 
     private HashSet<int> _hitTargets = new HashSet<int>(10);
@@ -37,10 +38,11 @@ public class Bullet : MonoBehaviour, ICollidable
         }
     }
 
-    public void InitBullet(Vector2 dir, float playerDamage, int playerPierce = 0)
+    public void InitBullet(Vector2 dir, float playerDamage, int playerPierce = 0,float power = 0f)
     {
         damage = playerDamage;
         pierce = playerPierce;
+        this.power =  power;
     }
 
     public void OnCollide(ICollidable other)

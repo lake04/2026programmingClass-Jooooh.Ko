@@ -22,7 +22,6 @@ public class CardUIManager : Singleton<CardUIManager>,IManager
     public void ShowCards()
     {
         panel.SetActive(true);
-        //panel.transform.localScale = Vector3.one;
         isClick = false;
         currentCards.Clear();
         List<int> usedIndices = new List<int>();
@@ -62,26 +61,31 @@ public class CardUIManager : Singleton<CardUIManager>,IManager
     public void ChooseCard(CardBase chosen)
     {
         if (!isClick) return;
-
         isClick = false;
 
-        Debug.Log("카드 선택됨");
+        Debug.Log($"{chosen.cardName} 선택됨");
         panel.SetActive(false);
         Time.timeScale = 1f;
 
-        StatCard statCard = chosen as StatCard;
-
-        switch (chosen.cardType)
+        if (chosen is SkillCard skillCard)
         {
-            case cardType.stat:
-                GameManager.instance.player.AddStats(statCard.playerHP, statCard.playerDamage, statCard.playerSpeed);
-                break;
-            case cardType.Healing:
-                GameManager.instance.player.Healingv(statCard.playerHP);
-                break;
-            case cardType.Item:
-               
-                break;
+            SkillManager.Instance.AddOrUpgradeSkill(skillCard);
+        }
+        else if (chosen is StatCard statCard)
+        {
+            switch (statCard.cardType)
+            {
+                case cardType.stat:
+                    GameManager.instance.player.AddStats(statCard.playerHP, statCard.playerDamage, statCard.playerSpeed);
+                    break;
+                case cardType.Healing:
+                    GameManager.instance.player.Healingv(statCard.playerHP);
+                    break;
+            }
+        }
+        else
+        {
+            Debug.LogWarning("알 수 없는 카드 타입입니다.");
         }
     }
 

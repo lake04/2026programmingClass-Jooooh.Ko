@@ -18,6 +18,7 @@ public class CollisionSystem
         CheckEnemyWithBullets(); 
         CheckPlayerWithEnemies();
         CheckPlayerWithExp();
+        CheckEnemyWithAura();
     }
 
     private bool IsColliding(Vector2 posA, float radA, Vector2 posB, float radB)
@@ -41,7 +42,7 @@ public class CollisionSystem
                 {
                     if (enemies[j] is IDamageable damageable)
                     {
-                        damageable.TakeDamage(bullet.damage);
+                        damageable.TakeDamage(bullet.damage,bullet.power);
                     }
 
                     bullet.OnCollide(enemies[j]);
@@ -94,6 +95,34 @@ public class CollisionSystem
             {
                 gems[i].OnCollide(player);
             }
+        }
+    }
+
+    public void CheckEnemyWithAura()
+    {
+        var auras = SkillManager.Instance.activeAuras;
+        var enemies = Enemy.ActiveEnemies;
+
+        for (int i = 0; i < auras.Count; i++)
+        {
+            var aura = auras[i];
+
+            if (!aura.IsReadyToAttack) continue;
+
+            for (int j = enemies.Count - 1; j >= 0; j--)
+            {
+                if (IsColliding(aura.Position, aura.Radius, enemies[j].Position, enemies[j].Radius))
+                {
+                    if (enemies[j] is IDamageable damageable)
+                    {
+                        damageable.TakeDamage(aura.skillData.damage, 0);
+                    }
+
+                    aura.OnCollide(enemies[j]);
+                    enemies[j].OnCollide(aura);
+                }
+            }
+            aura.ResetAttackTimer();
         }
     }
 }

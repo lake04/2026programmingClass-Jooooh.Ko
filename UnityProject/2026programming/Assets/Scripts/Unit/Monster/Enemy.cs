@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -20,6 +21,9 @@ public class Enemy : Unit, IDamageable, ICollidable
     private static ContactFilter2D _enemyFilter;
     private static bool _filterInitialized = false;
 
+    private bool isKnockback = false;
+    private FlashSprite flashSprite;
+
     public void OnCollide(ICollidable other)
     {
         
@@ -30,6 +34,7 @@ public class Enemy : Unit, IDamageable, ICollidable
         _pooledObject = GetComponent<PooledObject>();
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        flashSprite = GetComponent<FlashSprite>();
 
         rb.bodyType = RigidbodyType2D.Kinematic;
         rb.simulated = true;
@@ -62,7 +67,14 @@ public class Enemy : Unit, IDamageable, ICollidable
 
     protected override void Move()
     {
-        if (FieldManager.Instance == null) return;
+        if (FieldManager.Instance == null)
+        {
+            return;
+        }
+        else if(isKnockback)
+        {
+            return;
+        }
 
         Vector2 myPos = rb.position;
 
@@ -115,10 +127,34 @@ public class Enemy : Unit, IDamageable, ICollidable
         return push;
     }
 
-    public void TakeDamage(float amount)
+    public  void TakeDamage(float amount,float power = 0f)
     {
         curHp -= amount;
+
+        Vector2 myPos = rb.position;
+
+        Vector2 flowDir = FieldManager.Instance.GetDirection(myPos);
+
+        Vector2 dir = (myPos - flowDir).normalized;
+
+        flashSprite.Flash();
+
+        StopCoroutine(KnockbackRoutine(dir,power));
+        StartCoroutine(KnockbackRoutine(dir, power));
+
         if (curHp <= 0) Die();
+    }
+
+    private IEnumerator KnockbackRoutine(Vector2 dir, float power)
+    {
+        isKnockback = true;
+
+        rb.linearVelocity = Vector2.zero;
+        rb.AddForce(dir * power, ForceMode2D.Impulse);
+
+        yield return new WaitForSeconds(0.35f);
+
+        isKnockback = false;
     }
 
     public void Die()
@@ -138,5 +174,8 @@ public class Enemy : Unit, IDamageable, ICollidable
     {
         ActiveEnemies.Remove(this);
         rb.linearVelocity = Vector3.zero;
+        spriteRenderer.color = Color.red;
+        flashSprite.StopFlash();
+        isKnockback = false;
     }
 }

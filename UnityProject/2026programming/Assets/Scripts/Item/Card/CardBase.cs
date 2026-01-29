@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum cardType { stat,Healing,Item};
+public enum cardType { stat,Healing,skill};
 
 public abstract class CardBase : ScriptableObject
 {

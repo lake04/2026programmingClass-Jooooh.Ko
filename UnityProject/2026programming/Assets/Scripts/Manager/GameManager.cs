@@ -9,7 +9,6 @@ public class GameManager : Singleton<GameManager>
     public Player player;
     private CollisionSystem _collisionSystem;
 
-
     public override void Awake()
     {
         base.Awake();

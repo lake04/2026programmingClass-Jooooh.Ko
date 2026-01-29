@@ -10,11 +10,6 @@ public class FollowCamera : MonoBehaviour
         target = GameManager.Instance.player.transform;
     }
 
-    void Update()
-    {
-        
-    }
-
     private void LateUpdate()
     {
         transform.position = new Vector3(target.position.x, target.position.y,-10);

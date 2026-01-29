@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Card/StatCard")]
+[CreateAssetMenu(menuName = "Cards/StatCard")]
 public class StatCard : CardBase
 {
     public int playerHP;
