@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class AreaSkill : SkillBase
@@ -10,8 +11,15 @@ public class AreaSkill : SkillBase
     public override void Init(SkillCard data)
     {
         base.Init(data);
+        currentRange = skillData.range;
 
         auraRenderer = GetComponentInChildren<SpriteRenderer>();
+
+        if (auraRenderer == null)
+        {
+            auraRenderer.AddComponent<SpriteRenderer>();
+        }
+
         UpdateVisuals();
     }
 
@@ -38,6 +46,6 @@ public class AreaSkill : SkillBase
 
     public override void OnCollide(ICollidable other)
     {
-        Debug.Log("¸¶´Ã °ø°Ý");
+      
     }
 }

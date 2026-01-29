@@ -115,7 +115,7 @@ public class Player : Unit, IDamageable , ICollidable
             float angle = Mathf.Atan2(fireDir.y, fireDir.x) * Mathf.Rad2Deg;
             pooled.transform.rotation = Quaternion.Euler(0, 0, angle - 90);
 
-            bullet.InitBullet(fireDir, damage,0,1f);
+            bullet.InitBullet(fireDir, damage,0,2f);
         }
     }
 

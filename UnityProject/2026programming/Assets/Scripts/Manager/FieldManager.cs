@@ -24,7 +24,6 @@ public class FieldManager : Singleton<FieldManager>, IManager
 
     public  void Init()
     {
-        Debug.Log("필드 매니저1");
         grid = new Grid[gridWidth, gridHeight];
         enemyGrid = new List<Enemy>[gridWidth, gridHeight];
 

@@ -7,7 +7,7 @@ public class LevelMamanger : Singleton<LevelMamanger>, IManager
 {
     [Header("·¹º§")]
     public float curExp = 0;
-    private float maxExp = 10f;
+    private float maxExp = 8f;
     public int curLeve = 1;
 
     public Slider levelSlider;

@@ -149,7 +149,7 @@ public class Enemy : Unit, IDamageable, ICollidable
     {
         isKnockback = true;
 
-        rb.linearVelocity = Vector2.zero;
+        //rb.linearVelocity = Vector2.zero;
         rb.AddForce(dir * power, ForceMode2D.Impulse);
 
         yield return new WaitForSeconds(0.35f);

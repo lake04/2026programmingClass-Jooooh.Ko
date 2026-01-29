@@ -13,7 +13,11 @@ public abstract class SkillBase : MonoBehaviour, ICollidable
     public virtual void Init(SkillCard data)
     {
         skillData = data;
-        currentRange = skillData.range;
+    }
+
+    public virtual void Attack()
+    {
+       
     }
 
     public virtual void OnCollide(ICollidable other)

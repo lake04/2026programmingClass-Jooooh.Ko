@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum SkillType { Projectile, Aura, Orbit }
+public enum SkillType { Projectile, Aura, Orbit , Lightning}
 
 [CreateAssetMenu(fileName = "NewSkillCard", menuName = "Cards/Skill")]
 public class SkillCard : CardBase
 {
     public SkillType skillType;
-
+    public GameObject gameObject;
     public float damage;
     public float cooldown;
     public float speed;
