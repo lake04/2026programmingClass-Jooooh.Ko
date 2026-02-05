@@ -47,9 +47,14 @@ public class Enemy : Unit, IDamageable, ICollidable
         Init();
     }
 
-    public override void Init()
+    public  void Init(EnemyData enemyData)
     {
+        Debug.Log("enemy √ ±‚»≠");
+        maxHp = enemyData.curHp;
         curHp = maxHp;
+        moveSpeed = enemyData.moveSpeed;
+        damage = enemyData.damage;
+        attackCooldown = enemyData.attackCooldown;
     }
 
     void Update()
@@ -80,16 +85,24 @@ public class Enemy : Unit, IDamageable, ICollidable
 
         Vector2 flowDir = FieldManager.Instance.GetDirection(myPos);
 
-        Vector2 separationDir = CalculateSeparation(myPos);
+        //Vector2 separationDir = CalculateSeparation(myPos);
 
-        Vector2 finalDir = (flowDir + separationDir * separationForce).normalized;
+        //Vector2 finalDir = (flowDir + separationDir * separationForce).normalized;
 
-        if (finalDir != Vector2.zero)
+        //if (finalDir != Vector2.zero)
+        //{
+        //    Vector2 targetPos = rb.position + (finalDir * moveSpeed * Time.fixedDeltaTime);
+        //    rb.MovePosition(targetPos);
+
+        //    spriteRenderer.flipX = finalDir.x < 0;
+        //}
+
+        if (flowDir != Vector2.zero)
         {
-            Vector2 targetPos = rb.position + (finalDir * moveSpeed * Time.fixedDeltaTime);
+            Vector2 targetPos = rb.position + (flowDir * moveSpeed * Time.fixedDeltaTime);
             rb.MovePosition(targetPos);
 
-            spriteRenderer.flipX = finalDir.x < 0;
+            spriteRenderer.flipX = flowDir.x < 0;
         }
     }
 

@@ -1,27 +1,39 @@
-using UnityEngine;
 using System.Collections;
+using UnityEditor.Overlays;
+using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    public ObjectPool enemyPool; 
+    public ObjectPool enemyPool;
     public float spawnInterval = 2f;
-
-    private IEnumerator spawnEnemy;
-    private WaitForSeconds wait;
-
     public Transform[] spawnPoints;
     public int enemyCount;
 
-    private void Awake()
-    {
-        spawnPoints = GetComponentsInChildren<Transform>();
-    }
+    [Header("Wave Settings")]
+    [SerializeField] private WaveData[] waveDatas; 
+    [SerializeField] private float[] waveTime; 
+    [SerializeField] private int curWave = 0;
+
+    public float timer = 0;
+    private WaitForSeconds wait;
 
     private void Start()
     {
-        spawnEnemy = SpawnRoutine();
         wait = new WaitForSeconds(spawnInterval);
         StartCoroutine(SpawnRoutine());
+    }
+
+    private void Update()
+    {
+        timer += Time.deltaTime;
+
+        if (curWave + 1 < waveDatas.Length && curWave < waveTime.Length)
+        {
+            if (timer >= waveTime[curWave])
+            {
+                curWave++;
+            }
+        }
     }
 
     private IEnumerator SpawnRoutine()
@@ -35,9 +47,31 @@ public class EnemySpawner : MonoBehaviour
 
     private void SpawnEnemy()
     {
+        if (spawnPoints.Length == 0 || waveDatas.Length == 0)
+        {
+            return;
+        }
+
+        int waveIdx = Mathf.Min(curWave, waveDatas.Length - 1);
+        WaveData currentWaveData = waveDatas[waveIdx];
+
+        if (currentWaveData.enemyDatas.Length == 0)
+        {
+            return;
+        }
+
+        int spawnIdx = Random.Range(0, spawnPoints.Length);
+
         PooledObject pooled = enemyPool.GetPooledObject();
-        pooled.transform.position = spawnPoints[Random.Range(1, spawnPoints.Length)].position;
+        pooled.transform.position = spawnPoints[spawnIdx].position;
         enemyCount++;
-        pooled.GetComponent<Enemy>().Init();
+
+        int enemyIdx = Random.Range(0, currentWaveData.enemyDatas.Length);
+        EnemyData data = currentWaveData.enemyDatas[enemyIdx];
+
+        if (pooled.TryGetComponent<Enemy>(out Enemy enemy))
+        {
+            enemy.Init(data);
+        }
     }
 }

@@ -8,6 +8,7 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private IManager[] managers;
     public Player player;
     private CollisionSystem _collisionSystem;
+    [SerializeField] private TMP_Text timeText;
 
     public override void Awake()
     {
@@ -44,6 +45,7 @@ public class GameManager : Singleton<GameManager>
     private void Update()
     {
         UpdateLogic();
+        UpdateTime();
     }
 
     private void UpdateLogic()
@@ -54,6 +56,9 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-  
+    private void UpdateTime()
+    {
+        timeText.text = Time.timeSinceLevelLoad.ToString("F2");
+    }
   
 }
