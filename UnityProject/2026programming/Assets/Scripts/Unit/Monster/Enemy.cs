@@ -22,6 +22,7 @@ public class Enemy : Unit, IDamageable, ICollidable
     private static bool _filterInitialized = false;
 
     private bool isKnockback = false;
+    private float _knockbackTimer = 0.2f;
     private FlashSprite flashSprite;
 
     public void OnCollide(ICollidable other)
@@ -35,10 +36,6 @@ public class Enemy : Unit, IDamageable, ICollidable
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         flashSprite = GetComponent<FlashSprite>();
-
-        rb.bodyType = RigidbodyType2D.Kinematic;
-        rb.simulated = true;
-        rb.interpolation = RigidbodyInterpolation2D.None;
     }
 
     private void OnEnable()
@@ -68,6 +65,7 @@ public class Enemy : Unit, IDamageable, ICollidable
     void FixedUpdate() 
     {
         Move();
+        OnManualUpdate(Time.deltaTime);
     }
 
     protected override void Move()
@@ -106,6 +104,14 @@ public class Enemy : Unit, IDamageable, ICollidable
         }
     }
 
+    void OnManualUpdate(float time)
+    {
+        if (isKnockback)
+        {
+            _knockbackTimer -= time;
+            if (_knockbackTimer <= 0) isKnockback = false;
+        }
+    }
     private Vector2 CalculateSeparation(Vector2 myPos)
     {
         Vector2 push = Vector2.zero;
@@ -151,23 +157,11 @@ public class Enemy : Unit, IDamageable, ICollidable
         Vector2 dir = (myPos - flowDir).normalized;
 
         flashSprite.Flash();
-
-        StopCoroutine(KnockbackRoutine(dir,power));
-        StartCoroutine(KnockbackRoutine(dir, power));
-
-        if (curHp <= 0) Die();
-    }
-
-    private IEnumerator KnockbackRoutine(Vector2 dir, float power)
-    {
+        _knockbackTimer = 0.35f;
         isKnockback = true;
-
-        //rb.linearVelocity = Vector2.zero;
         rb.AddForce(dir * power, ForceMode2D.Impulse);
 
-        yield return new WaitForSeconds(0.35f);
-
-        isKnockback = false;
+        if (curHp <= 0) Die();
     }
 
     public void Die()

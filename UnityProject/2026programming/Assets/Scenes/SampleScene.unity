@@ -2526,15 +2526,14 @@ MonoBehaviour:
   - {fileID: 1534664633}
   - {fileID: 624163550}
   enemyCount: 0
-  enemyDatas:
-  - {fileID: 11400000, guid: 3f77292a520e9ed4c80a821653a709ba, type: 2}
-  - {fileID: 11400000, guid: 21429b38ad9d7674eb2bc19e8794a03a, type: 2}
-  - {fileID: 11400000, guid: 62334b7c4d8ebb248b5106fbcd3f7f00, type: 2}
-  waveTimeIndex: 0
+  waveDatas:
+  - {fileID: 11400000, guid: ebff57e54b164274c9ddec7d4cf2471d, type: 2}
+  - {fileID: 11400000, guid: 0467cd6f73cfede489e88a8f8f563cf5, type: 2}
   waveTime:
   - 30
   - 60
   curWave: 0
+  timer: 0
 --- !u!4 &1799295392
 Transform:
   m_ObjectHideFlags: 0
