@@ -129,7 +129,7 @@ public class Player : Unit, IDamageable , ICollidable
     protected virtual void Die()
     {
         
-        Debug.Log("플레이어 사망");
+        //Debug.Log("플레이어 사망");
     }
 
     public void AddHP(int amount)

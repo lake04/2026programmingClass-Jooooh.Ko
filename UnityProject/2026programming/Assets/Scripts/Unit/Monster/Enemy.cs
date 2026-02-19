@@ -25,6 +25,8 @@ public class Enemy : Unit, IDamageable, ICollidable
     private float _knockbackTimer = 0.2f;
     private FlashSprite flashSprite;
 
+    public Rigidbody2D Rb => rb;
+
     public void OnCollide(ICollidable other)
     {
         
@@ -46,7 +48,6 @@ public class Enemy : Unit, IDamageable, ICollidable
 
     public  void Init(EnemyData enemyData)
     {
-        Debug.Log("enemy √ ±‚»≠");
         maxHp = enemyData.curHp;
         curHp = maxHp;
         moveSpeed = enemyData.moveSpeed;
@@ -64,44 +65,15 @@ public class Enemy : Unit, IDamageable, ICollidable
 
     void FixedUpdate() 
     {
-        Move();
-        OnManualUpdate(Time.deltaTime);
-    }
-
-    protected override void Move()
-    {
         if (FieldManager.Instance == null)
         {
             return;
         }
-        else if(isKnockback)
+        else if (isKnockback)
         {
             return;
         }
-
-        Vector2 myPos = rb.position;
-
-        Vector2 flowDir = FieldManager.Instance.GetDirection(myPos);
-
-        //Vector2 separationDir = CalculateSeparation(myPos);
-
-        //Vector2 finalDir = (flowDir + separationDir * separationForce).normalized;
-
-        //if (finalDir != Vector2.zero)
-        //{
-        //    Vector2 targetPos = rb.position + (finalDir * moveSpeed * Time.fixedDeltaTime);
-        //    rb.MovePosition(targetPos);
-
-        //    spriteRenderer.flipX = finalDir.x < 0;
-        //}
-
-        if (flowDir != Vector2.zero)
-        {
-            Vector2 targetPos = rb.position + (flowDir * moveSpeed * Time.fixedDeltaTime);
-            rb.MovePosition(targetPos);
-
-            spriteRenderer.flipX = flowDir.x < 0;
-        }
+        OnManualUpdate(Time.deltaTime);
     }
 
     void OnManualUpdate(float time)

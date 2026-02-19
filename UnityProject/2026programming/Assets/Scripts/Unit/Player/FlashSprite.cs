@@ -52,7 +52,6 @@ public class FlashSprite : MonoBehaviour
         {
             this.flashCoroutine = base.StartCoroutine(this.FlashRoutine());
         }
-        Debug.Log("flash white");
     }
 
     public void StopFlash()
