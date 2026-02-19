@@ -15,7 +15,7 @@ public class Enemy : Unit, IDamageable, ICollidable
 
     private static Collider2D[] _neighborResults = new Collider2D[10];
 
-    public Vector2 Position => rb.position;
+    public Vector2 Position => transform.position;
     public float Radius => 0.3f;
 
     private static ContactFilter2D _enemyFilter;
@@ -25,7 +25,6 @@ public class Enemy : Unit, IDamageable, ICollidable
     private float _knockbackTimer = 0.2f;
     private FlashSprite flashSprite;
 
-    public Rigidbody2D Rb => rb;
 
     public void OnCollide(ICollidable other)
     {
@@ -35,14 +34,12 @@ public class Enemy : Unit, IDamageable, ICollidable
     private void Awake()
     {
         _pooledObject = GetComponent<PooledObject>();
-        rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         flashSprite = GetComponent<FlashSprite>();
     }
 
     private void OnEnable()
     {
-        ActiveEnemies.Add(this);
         Init();
     }
 
@@ -59,7 +56,7 @@ public class Enemy : Unit, IDamageable, ICollidable
     {
         if (FieldManager.Instance != null)
         {
-            FieldManager.Instance.RegisterEnemy(this, rb.position);
+            FieldManager.Instance.RegisterEnemy(this, Position);
         }
     }
 
@@ -122,7 +119,7 @@ public class Enemy : Unit, IDamageable, ICollidable
     {
         curHp -= amount;
 
-        Vector2 myPos = rb.position;
+        Vector2 myPos = Position;
 
         Vector2 flowDir = FieldManager.Instance.GetDirection(myPos);
 
@@ -131,7 +128,9 @@ public class Enemy : Unit, IDamageable, ICollidable
         flashSprite.Flash();
         _knockbackTimer = 0.35f;
         isKnockback = true;
-        rb.AddForce(dir * power, ForceMode2D.Impulse);
+
+        //TODO: 넉백 계산 로직 수정중
+        //rb.AddForce(dir * power, ForceMode2D.Impulse);
 
         if (curHp <= 0) Die();
     }
@@ -146,13 +145,14 @@ public class Enemy : Unit, IDamageable, ICollidable
             expScript.InitPos(transform.position);
         }
 
+        EnemyManager.Instance.UnregisterEnemy(this.transform);
+
         _pooledObject.Release();
     }
 
     private void OnDisable()
     {
         ActiveEnemies.Remove(this);
-        rb.linearVelocity = Vector3.zero;
         spriteRenderer.color = Color.red;
         flashSprite.StopFlash();
         isKnockback = false;

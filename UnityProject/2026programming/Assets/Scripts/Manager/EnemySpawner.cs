@@ -72,6 +72,8 @@ public class EnemySpawner : MonoBehaviour
         if (pooled.TryGetComponent<Enemy>(out Enemy enemy))
         {
             enemy.Init(data);
+            Enemy.ActiveEnemies.Add(enemy);
+            EnemyManager.Instance.RegisterEnemy(enemy.transform);
         }
     }
 }
