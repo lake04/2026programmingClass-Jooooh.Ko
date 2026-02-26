@@ -11,7 +11,6 @@ public class EnemyManager : Singleton<EnemyManager>, IManager
     private TransformAccessArray _transformArray;
 
     private NativeArray<Vector2> _flowDirections;
-    private NativeArray<float> _speeds;
 
     private const int MaxCapacity = 8000;
 
@@ -19,7 +18,6 @@ public class EnemyManager : Singleton<EnemyManager>, IManager
     {
         _transformArray = new TransformAccessArray(MaxCapacity);
         _flowDirections = new NativeArray<Vector2>(MaxCapacity, Allocator.Persistent);
-        _speeds = new NativeArray<float>(MaxCapacity, Allocator.Persistent);
     }
 
     void FixedUpdate()
@@ -31,14 +29,13 @@ public class EnemyManager : Singleton<EnemyManager>, IManager
         {
             Enemy enemy = Enemy.ActiveEnemies[i];
             Vector2 dir = FieldManager.Instance.GetDirection(enemy.Position);
-            _flowDirections[i] = dir;
-            _speeds[i] = enemy.moveSpeed;
+
+            _flowDirections[i] = enemy.GetCurrentVelocity(dir);
         }
 
         var job = new ControlEnemyJob
         {
-            FlowDirections = _flowDirections,
-            Speeds = _speeds,
+            FinalVelocities = _flowDirections,
             DeltaTime = Time.fixedDeltaTime
             
         };
@@ -83,11 +80,6 @@ public class EnemyManager : Singleton<EnemyManager>, IManager
         if (_flowDirections.IsCreated)
         {
             _flowDirections.Dispose();
-        }
-
-        if (_speeds.IsCreated)
-        {
-            _speeds.Dispose();
         }
     }
 

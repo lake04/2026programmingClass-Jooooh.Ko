@@ -8,25 +8,18 @@ using UnityEngine.Jobs;
 [BurstCompile]
 public struct ControlEnemyJob : IJobParallelForTransform
 {
-    [ReadOnly] public NativeArray<Vector2> FlowDirections;
-    [ReadOnly] public NativeArray<float> Speeds;
+    [ReadOnly] public NativeArray<Vector2> FinalVelocities;
     public float DeltaTime;
 
     public void Execute(int index, TransformAccess transform)
     {
         float3 currentPos = transform.position;
 
-        float2 moveDir = FlowDirections[index];
-        float moveSpeed = Speeds[index];
+        float2 velocity = FinalVelocities[index];
 
-        if (math.lengthsq(moveDir) > 0.001f)
-        {
-            float2 velocity = math.normalize(moveDir) * moveSpeed * DeltaTime;
+        currentPos.xy += velocity * DeltaTime;
 
-            currentPos.xy += velocity;
-
-            transform.position = currentPos;
-        }
+       transform.position = currentPos;
     }
 
 }

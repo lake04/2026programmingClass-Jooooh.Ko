@@ -2549,7 +2549,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyPool: {fileID: 1799295393}
-  spawnInterval: 0.001
+  spawnInterval: 1e-17
   spawnPoints:
   - {fileID: 1028056702}
   - {fileID: 610773663}

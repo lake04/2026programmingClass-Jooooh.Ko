@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Enemy : Unit, IDamageable, ICollidable
@@ -22,7 +23,9 @@ public class Enemy : Unit, IDamageable, ICollidable
     private static bool _filterInitialized = false;
 
     private bool isKnockback = false;
-    private float _knockbackTimer = 0.2f;
+    private Vector2 knockback = Vector2.zero;
+    [SerializeField] private float friction = 5f;
+
     private FlashSprite flashSprite;
 
 
@@ -62,25 +65,17 @@ public class Enemy : Unit, IDamageable, ICollidable
 
     void FixedUpdate() 
     {
-        if (FieldManager.Instance == null)
+        if (knockback.sqrMagnitude > 0.01f)
         {
-            return;
+            knockback = Vector2.Lerp(knockback, Vector2.zero, Time.fixedDeltaTime * friction);
         }
-        else if (isKnockback)
+        else
         {
-            return;
+            knockback = Vector2.zero;
+            isKnockback = false;
         }
-        OnManualUpdate(Time.deltaTime);
     }
 
-    void OnManualUpdate(float time)
-    {
-        if (isKnockback)
-        {
-            _knockbackTimer -= time;
-            if (_knockbackTimer <= 0) isKnockback = false;
-        }
-    }
     private Vector2 CalculateSeparation(Vector2 myPos)
     {
         Vector2 push = Vector2.zero;
@@ -118,19 +113,16 @@ public class Enemy : Unit, IDamageable, ICollidable
     public  void TakeDamage(float amount,float power = 0f)
     {
         curHp -= amount;
-
-        Vector2 myPos = Position;
-
-        Vector2 flowDir = FieldManager.Instance.GetDirection(myPos);
-
-        Vector2 dir = (myPos - flowDir).normalized;
-
         flashSprite.Flash();
-        _knockbackTimer = 0.35f;
-        isKnockback = true;
 
-        //TODO: 넉백 계산 로직 수정중
-        //rb.AddForce(dir * power, ForceMode2D.Impulse);
+
+        Vector2 dir = (Position - (Vector2)FieldManager.Instance.player.position).normalized;
+
+        if (power > 0f)
+        {
+            knockback = dir * power;
+            isKnockback = true;
+        }
 
         if (curHp <= 0) Die();
     }
@@ -149,6 +141,12 @@ public class Enemy : Unit, IDamageable, ICollidable
 
         _pooledObject.Release();
     }
+
+    public Vector2 GetCurrentVelocity(Vector2 flowDir)
+    {
+        return (flowDir * moveSpeed) + knockback;
+    }
+
 
     private void OnDisable()
     {
